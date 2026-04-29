@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сменные задания</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Страница выбора пользователя -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <h1>Сменные задания</h1>
+            <p class="subtitle">Выберите ваше ФИО</p>
+            <div class="user-list" id="userList">
+                <!-- Пользователи будут загружены через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Страница заполнения задания (простые строки) -->
+    <div id="taskPage" class="page">
+        <div class="container">
+            <header>
+                <button onclick="logout()" class="btn-back">← Выход</button>
+                <h2>Заполнение сменного задания</h2>
+                <div class="user-info" id="currentUserInfo"></div>
+            </header>
+            
+            <form id="taskForm" class="task-form">
+                <div class="form-section">
+                    <h3>Общие данные</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Дата *</label>
+                            <input type="date" id="taskDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Смена *</label>
+                            <select id="taskShift" required>
+                                <option value="">Выберите смену</option>
+                                <option value="1">1 смена (08:00 - 16:00)</option>
+                                <option value="2">2 смена (16:00 - 00:00)</option>
+                                <option value="3">3 смена (00:00 - 08:00)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Участок *</label>
+                            <input type="text" id="taskArea" required placeholder="Например: Станочный цех">
+                        </div>
+                        <div class="form-group">
+                            <label>Мастер *</label>
+                            <input type="text" id="taskMaster" required placeholder="ФИО мастера">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Список заданий</h3>
+                    <p class="section-desc">Добавьте задания для каждого работника</p>
+                    
+                    <div id="tasksListContainer">
+                        <!-- Строки заданий будут добавляться здесь -->
+                    </div>
+                    
+                    <button type="button" onclick="addTaskItem()" class="btn-add-row">+ Добавить задание</button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" onclick="saveDraft()" class="btn-draft">Сохранить черновик</button>
+                    <button type="submit" class="btn-submit">Сохранить задание</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Страница просмотра заданий (табличный вид) -->
+    <div id="viewPage" class="page">
+        <div class="container">
+            <header>
+                <button onclick="logout()" class="btn-back">← Выход</button>
+                <h2>Просмотр сменных заданий</h2>
+                <div class="user-info" id="currentViewUser"></div>
+            </header>
+            
+            <div class="view-filters">
+                <div class="filter-item">
+                    <label>Дата:</label>
+                    <input type="date" id="viewDate">
+                </div>
+                <div class="filter-item">
+                    <label>Участок:</label>
+                    <select id="viewArea">
+                        <option value="all">Все</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Цех:</label>
+                    <select id="viewDepartment">
+                        <option value="all">Все</option>
+                    </select>
+                </div>
+                <button onclick="exportToExcel()" class="btn-export">Экспорт</button>
+            </div>
+
+            <div class="view-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalTasksCount">0</span>
+                    <span class="stat-label">Всего заданий</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalRecords">0</span>
+                    <span class="stat-label">Всего строк</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="otkApproved">0</span>
+                    <span class="stat-label">С ОТК</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="masterApproved">0</span>
+                    <span class="stat-label">С мастером</span>
+                </div>
+            </div>
+
+            <div class="tasks-container" id="tasksContainer">
+                <!-- Задания будут загружены через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для добавления пользователя -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <h3>Добавить пользователя</h3>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>ФИО:</label>
+                    <input type="text" id="newUserName" required placeholder="Иванов Иван Иванович">
+                </div>
+                <div class="form-group">
+                    <label>Роль:</label>
+                    <select id="newUserRole" required>
+                        <option value="worker">Рабочий</option>
+                        <option value="otk">ОТК</option>
+                        <option value="master">Мастер</option>
+                        <option value="admin">Администратор</option>
+                        <option value="director">Начальник производства</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" onclick="closeModal()" class="btn-cancel">Отмена</button>
+                    <button type="submit" class="btn-submit">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
